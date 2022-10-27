@@ -23,17 +23,22 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
+import io.reactivex.disposables.Disposable
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import java.net.Socket
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
+import java.util.logging.Logger
 import kotlin.concurrent.thread
 
 class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback {
 
     var TAG:String = "로그"
     val client = OkHttpClient()
+    val intervalMillis = 1000L
     private lateinit var locationSource: FusedLocationSource
     private lateinit var naverMap: NaverMap
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,12 +77,8 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback {
                 return true
             }
             R.id.location ->{
-                val request: Request = Request
-                    .Builder()
-                    .url("ws://kangtong1105.codns.com:8080/ws/chat")
-                    .build()
-                val listener = SocketApplication()
-                val wss : WebSocket = client.newWebSocket(request, listener)
+                val stomp123 =StompApplication()
+                stomp123.main()
 
                 return true
             }
@@ -117,6 +118,5 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
         private const val API_KEY = BuildConfig.API_KEY
     }
-
 
 }

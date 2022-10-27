@@ -34,7 +34,7 @@ class SocketApplication : WebSocketListener() {
 
     }
 
-    companion object{
+    companion object {
         private const val NORMAL_CLOSSURE_STATUS = 1000
     }
 }
