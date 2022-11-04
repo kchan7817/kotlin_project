@@ -13,6 +13,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import retrofit2.http.Headers
 
 class JoinActivity : AppCompatActivity() {
 

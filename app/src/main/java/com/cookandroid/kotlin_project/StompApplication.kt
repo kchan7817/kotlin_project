@@ -25,6 +25,8 @@ class StompApplication : WebSocketListener() {
         var topic: Disposable
 
         val url = "ws://kangtong1105.codns.com:8080/ws-stomp"
+        val sub_url = "/sub/chat/room/AKd1sofsmLm"
+        val send_url = "/pub/chat/message"
         val intervalMillis = 1000L
         val client = OkHttpClient.Builder()
             .readTimeout(10, TimeUnit.SECONDS)
@@ -39,31 +41,27 @@ class StompApplication : WebSocketListener() {
             when (it.type) {
                 Event.Type.OPENED -> {
 
-                    // subscribe
-                    topic = stomp.join(url)
-                        .subscribe { logger.log(Level.INFO, it) }
-
-                    Log.d("제에에에발~~~","좀 되라 제발..")
-
-                    // unsubscribe
-                    topic.dispose()
-
-                    // send
-                    stomp.send(url , "hihi").subscribe {
-                        if (it) {
-                        }
-                    }
                 }
                 Event.Type.CLOSED -> {
-                    Log.d("메롱~","닫혔지롱~")
+
                 }
                 Event.Type.ERROR -> {
-                    Log.e("아 씨발","또안되네;")
+
                 }
                 else -> {}
             }
         }
+        // subscribe
+        topic = stomp.join(sub_url)
+            .subscribe { logger.log(Level.INFO, it) }
 
+        // send
+        stomp.send(send_url ,"nice to meet you").subscribe {
+            if (it) {
+            }
+        }
+        //unsubcribe
+        topic.dispose()
 
         // disconnect
         stompConnection.dispose()

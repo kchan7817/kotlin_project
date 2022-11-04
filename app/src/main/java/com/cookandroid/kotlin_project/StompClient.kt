@@ -1,6 +1,7 @@
 package com.cookandroid.kotlin_project
 
-import android.util.Log
+import com.cookandroid.kotlin_project.Headers.Companion.DESTINATION
+import com.cookandroid.kotlin_project.Headers.Companion.ID
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import okhttp3.*
@@ -38,7 +39,6 @@ class StompClient(private val okHttpClient: OkHttpClient,
                 emitter = it
                 shouldBeConnected = true
                 open()
-
             }
             .doOnDispose {
                 close()
@@ -53,11 +53,9 @@ class StompClient(private val okHttpClient: OkHttpClient,
                 val topicId = UUID.randomUUID().toString()
 
                 val headers = HashMap<String, String>()
-                headers[Headers1.ID] = topicId
-                headers[Headers1.DESTINATION] = topic
-                headers[Headers1.ACK] = DEFAULT_ACK
-                headers.put("token","eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJLZXkiOiI3a1B5TVpPZ1Nrck9VIiwiZ3JvdXBJZCI6IjQwMjhiODgxODQwM2I1ZTUwMTg0MDNiZjM4ODgwMDAyIiwiZ3JvdXBLZXkiOiJGTzJQdUduTzJCYUJtNyIsIm1lbWJlcklkIjoiNDAyOGI4ODE4NDAzYjVlNTAxODQwM2JmMzhiMTAwMDMiLCJpc3MiOiJkZW1vIGFwcCIsImlhdCI6MTY2NjUxMDE5OCwiZXhwIjoxNjY2NTk2NTk4fQ.YF1QEJ4gngy4pvSUcyglPe26kjBdlahUTiv0E9JQAuh8lmR-JPo2rb-kNBWCIzornIZuiqEl2FKY5D97hMMIhw")
-                headers.put("listenKey","FO2PuGnO2BaBm7")
+                headers[Headers.ID] = topicId
+                headers[Headers.DESTINATION] = topic
+                headers[Headers.ACK] = DEFAULT_ACK
                 webSocket.send(compileMessage(Message(Commands.SUBSCRIBE, headers)))
 
                 emitters[topic] = it
@@ -71,7 +69,7 @@ class StompClient(private val okHttpClient: OkHttpClient,
                 val topicId = topics[topic]
 
                 val headers = HashMap<String, String>()
-                headers[Headers1.ID] = topicId!!
+                headers[Headers.ID] = topicId!!
                 webSocket.send(compileMessage(Message(Commands.UNSUBSCRIBE, headers)))
 
                 emitters.remove(topic)
@@ -86,9 +84,7 @@ class StompClient(private val okHttpClient: OkHttpClient,
         return Observable
             .create<Boolean> {
                 val headers = HashMap<String, String>()
-                headers.put("token","eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJLZXkiOiI3a1B5TVpPZ1Nrck9VIiwiZ3JvdXBJZCI6IjQwMjhiODgxODQwM2I1ZTUwMTg0MDNiZjM4ODgwMDAyIiwiZ3JvdXBLZXkiOiJGTzJQdUduTzJCYUJtNyIsIm1lbWJlcklkIjoiNDAyOGI4ODE4NDAzYjVlNTAxODQwM2JmMzhiMTAwMDMiLCJpc3MiOiJkZW1vIGFwcCIsImlhdCI6MTY2NjUxMDE5OCwiZXhwIjoxNjY2NTk2NTk4fQ.YF1QEJ4gngy4pvSUcyglPe26kjBdlahUTiv0E9JQAuh8lmR-JPo2rb-kNBWCIzornIZuiqEl2FKY5D97hMMIhw")
-                headers.put("listenKey","FO2PuGnO2BaBm7")
-                headers[Headers1.DESTINATION] = topic
+                headers[Headers.DESTINATION] = topic
                 it.onNext(webSocket.send(compileMessage(Message(Commands.SEND, headers, msg))))
                 it.onComplete()
             }
@@ -96,13 +92,16 @@ class StompClient(private val okHttpClient: OkHttpClient,
 
     private fun open() {
         if (!connected) {
+            val headers = HashMap<String, String>()
+            headers.put("token","eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJLZXkiOiJpMm55czdBTGxNNGIiLCJncm91cElkIjoiNDAyOGI4ODE4NDQzYTIxMzAxODQ0M2E2ZjI1YTAwMDIiLCJncm91cEtleSI6IkFLZDFzb2ZzbUxtIiwibWVtYmVySWQiOiI0MDI4Yjg4MTg0NDNhMjEzMDE4NDQzYTZmMjc0MDAwMyIsImlzcyI6ImRlbW8gYXBwIiwiaWF0IjoxNjY3NTgyMzMxLCJleHAiOjE2Njc2Njg3MzF9.tUErccDvUKl-PZiOl_BoRu7mKWboWX03o8yG8E8kChq5N77WoAGJoqJII9Axvv17K30PFlTE0B1_n8rRR6oQsQ")
+            headers.put("listenKey","AKd1sofsmLm")
             logger.log(Level.INFO, "Connecting...")
             val request = Request.Builder()
                 .url(url)
                 .build()
             webSocket = okHttpClient.newWebSocket(request, this)
+            webSocket.send(compileMessage(Message(Commands.CONNECT,headers)))
             connected = true
-
         } else {
             logger.log(Level.INFO, "Already connected")
         }
@@ -172,11 +171,9 @@ class StompClient(private val okHttpClient: OkHttpClient,
 
     override fun onOpen(socket: WebSocket, response: Response) {
         val headers = HashMap<String, String>()
-        headers[Headers1.VERSION] = SUPPORTED_VERSIONS
+        headers[Headers.VERSION] = SUPPORTED_VERSIONS
         webSocket.send(compileMessage(Message(Commands.CONNECT, headers)))
         logger.log(Level.INFO, "onOpen")
-        output("갔나요???: $headers")
-
     }
 
     override fun onClosed(socket: WebSocket, code: Int, reason: String) {
@@ -187,12 +184,10 @@ class StompClient(private val okHttpClient: OkHttpClient,
 
     override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
         handleMessage(parseMessage(bytes.toString()))
-        output("갔나요???:,$bytes")
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
         handleMessage(parseMessage(text))
-        output("갔나요???: $text")
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
@@ -206,17 +201,13 @@ class StompClient(private val okHttpClient: OkHttpClient,
         reconnect()
     }
 
-    fun output(text: String){
-        Log.d("stomp", text!!)
-    }
-
     private fun handleMessage(message: Message) {
         when (message.command) {
             Commands.CONNECTED -> {
                 emitter.onNext(Event(Event.Type.OPENED))
             }
             Commands.MESSAGE -> {
-                val dest = message.headers[Headers1.DESTINATION]
+                val dest = message.headers[Headers.DESTINATION]
                 if (dest != null) {
                     val emitter = emitters[dest]
                     if (emitter != null) {

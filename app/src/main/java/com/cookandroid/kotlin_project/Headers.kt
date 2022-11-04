@@ -1,6 +1,6 @@
 package com.cookandroid.kotlin_project
 
-interface Headers1 {
+interface Headers {
     companion object {
         const val VERSION = "accept-version"
         const val HEARTBEAT = "heart-beat"
