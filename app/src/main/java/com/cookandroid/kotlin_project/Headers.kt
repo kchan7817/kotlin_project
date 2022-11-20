@@ -9,5 +9,6 @@ interface Headers {
         const val MESSAGE_ID = "message-id"
         const val ID = "id"
         const val ACK = "ack"
+        const val TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJLZXkiOiJZdVFJNlRDZUxKSm1QIiwiZ3JvdXBJZCI6IjJjOWM5MDgxODQ1YzlhOTQwMTg0NWM5ZTcwMmMwMDAzIiwiZ3JvdXBLZXkiOiJJeTJPNkZUWElLNVMiLCJtZW1iZXJJZCI6IjJjOWM5MDgxODQ1YzlhOTQwMTg0NWM5ZTcwNDAwMDA0IiwiaXNzIjoiZGVtbyBhcHAiLCJpYXQiOjE2NjgwMDEyMDcsImV4cCI6MTY2ODA4NzYwN30.K63Xl2Z6a1gznSMNCSctv3_VFg8-8fL6ZuIGOy2iMk06fyKjyEZgzFQwMBWgVQ3Zt72y-SOXyEv4QRwksoys1Q"
     }
 }

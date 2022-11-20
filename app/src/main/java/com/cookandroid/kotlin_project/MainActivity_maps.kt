@@ -34,7 +34,11 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.concurrent.thread
 
-class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback {
+
+
+class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback{
+    val sub_url = "/sub/chat/room/OoMaprWQ7XKEU"
+    var msg = "제발 좀 성공 좀 하자 응???"
 
     var TAG:String = "로그"
     val client = OkHttpClient()
@@ -68,7 +72,6 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.menu_option,menu)
         return true
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -77,12 +80,11 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback {
                 return true
             }
             R.id.location ->{
-                val stomp123 =StompApplication()
-                stomp123.main()
 
                 return true
             }
             R.id.group ->{
+
                 return true
             }
             else -> return false
@@ -120,3 +122,91 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback {
     }
 
 }
+
+/*class StompApp(){
+        val logger = Logger.getLogger("Main")
+        val send_url = "/pub/chat/message"
+        lateinit var topic: Disposable
+        lateinit var stompConnection: Disposable
+        var sub_url = "/sub/chat/room/OoMaprWQ7XKEU"
+        val intervalMillis = 1000L
+        val client = OkHttpClient()
+        var msg = "제발 좀 성공 좀 하자 응???"
+
+        val stomp = StompClient(client, intervalMillis)
+        topic = stomp.join(sub_url).subscribe { logger.log(Level.INFO, it) }
+
+        fun subscribe(sub_url: String) {
+            topic = stomp.join(sub_url)
+                .subscribe { logger.log(Level.INFO, it) }
+        }
+
+        fun send(msg: String) {
+            stomp.send(send_url, msg).subscribe {
+                if (it) {
+
+                }
+            }
+        }
+
+        fun unsubscribe() {
+            topic.dispose()
+        }
+        /*fun disconnect(){
+            stompConnection.dispose()
+        }*/
+
+        // connect
+        fun stompconnect() {
+            stomp.connect().subscribe {
+                when (it.type) {
+                    Event.Type.OPENED -> {
+
+                    }
+                    Event.Type.CLOSED -> {
+
+                    }
+                    Event.Type.ERROR -> {
+
+                    }
+                    else -> {}
+                }
+            }
+        }
+
+        fun disconnect() {
+            stompConnection.dispose()
+        }
+
+        stompConnection = stomp.connect().subscribe {
+            when (it.type) {
+                Event.Type.OPENED -> {
+
+                }
+                Event.Type.CLOSED -> {
+
+                }
+                Event.Type.ERROR -> {
+
+                }
+                else -> {}
+            }
+        }
+
+
+        // subscribe
+        /*topic = stomp.join(sub_url)
+            .subscribe { logger.log(Level.INFO, it) }
+        // send
+        stomp.send(send_url, msg).subscribe {
+            if (it) {
+
+            }
+        }*/
+
+        //unsubcribe
+        //topic.dispose()
+
+        // disconnect
+        //stompConnection.dispose()
+}*/

@@ -81,7 +81,7 @@ interface signin_service{
     fun register_signin(@Body jsonparams: signin) : Call<signin>
 
     companion object { // static 처럼 공유객체로 사용가능함. 모든 인스턴스가 공유하는 객체로서 동작함.
-        private const val BASE_URL = "http://121.172.14.80:8080" // 주소
+        private const val BASE_URL = "http://121.172.15.207:8080" // 주소
 
         fun create(): signin_service {
 

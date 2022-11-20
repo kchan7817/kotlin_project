@@ -1,7 +1,5 @@
 package com.cookandroid.kotlin_project
 
-import com.cookandroid.kotlin_project.Headers.Companion.DESTINATION
-import com.cookandroid.kotlin_project.Headers.Companion.ID
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import okhttp3.*
@@ -31,7 +29,8 @@ class StompClient(private val okHttpClient: OkHttpClient,
 
     private lateinit var emitter: ObservableEmitter<Event>
 
-    lateinit var url: String
+    private val url: String = "ws://kangtong1105.codns.com:8080/ws-stomp"
+    private val token = "eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJLZXkiOiJ4ZmdkcFRmbEdMIiwiZ3JvdXBJZCI6IjQwMjhiODgxODQ2MTBmZjIwMTg0NjExMjFmMmMwMDAyIiwiZ3JvdXBLZXkiOiJPb01hcHJXUTdYS0VVIiwibWVtYmVySWQiOiI0MDI4Yjg4MTg0NjEwZmYyMDE4NDYxMTIxZjQ0MDAwMyIsImlzcyI6ImRlbW8gYXBwIiwiaWF0IjoxNjY4MDc1ODk1LCJleHAiOjE2NjgxNjIyOTV9.7LIycl2L4BXQnuBf151YnzOcfobpXP4u2xNQegBI4z94XoBE3__bLgHQT6mnZfnr4ltzpzmMnCAgWKHoZ6-3fg"
 
     fun connect(): Observable<Event> {
         return Observable
@@ -51,11 +50,11 @@ class StompClient(private val okHttpClient: OkHttpClient,
             .create<String> {
 
                 val topicId = UUID.randomUUID().toString()
-
                 val headers = HashMap<String, String>()
                 headers[Headers.ID] = topicId
                 headers[Headers.DESTINATION] = topic
                 headers[Headers.ACK] = DEFAULT_ACK
+                headers.put("token",token)
                 webSocket.send(compileMessage(Message(Commands.SUBSCRIBE, headers)))
 
                 emitters[topic] = it
@@ -84,8 +83,10 @@ class StompClient(private val okHttpClient: OkHttpClient,
         return Observable
             .create<Boolean> {
                 val headers = HashMap<String, String>()
+                headers.put("token",token)
                 headers[Headers.DESTINATION] = topic
-                it.onNext(webSocket.send(compileMessage(Message(Commands.SEND, headers, msg))))
+                val msg_1 = ("{\"payload\"" + ":" + "\"" + msg + "\""+"}")
+                it.onNext(webSocket.send(compileMessage(Message(Commands.SEND, headers, msg_1))))
                 it.onComplete()
             }
     }
@@ -93,8 +94,7 @@ class StompClient(private val okHttpClient: OkHttpClient,
     private fun open() {
         if (!connected) {
             val headers = HashMap<String, String>()
-            headers.put("token","eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJLZXkiOiJpMm55czdBTGxNNGIiLCJncm91cElkIjoiNDAyOGI4ODE4NDQzYTIxMzAxODQ0M2E2ZjI1YTAwMDIiLCJncm91cEtleSI6IkFLZDFzb2ZzbUxtIiwibWVtYmVySWQiOiI0MDI4Yjg4MTg0NDNhMjEzMDE4NDQzYTZmMjc0MDAwMyIsImlzcyI6ImRlbW8gYXBwIiwiaWF0IjoxNjY3NTgyMzMxLCJleHAiOjE2Njc2Njg3MzF9.tUErccDvUKl-PZiOl_BoRu7mKWboWX03o8yG8E8kChq5N77WoAGJoqJII9Axvv17K30PFlTE0B1_n8rRR6oQsQ")
-            headers.put("listenKey","AKd1sofsmLm")
+            headers.put("token",token)
             logger.log(Level.INFO, "Connecting...")
             val request = Request.Builder()
                 .url(url)
