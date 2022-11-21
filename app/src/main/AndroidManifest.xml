@@ -17,6 +17,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Kotlin_project"
         android:usesCleartextTraffic="true">
+
+        <service
+            android:name=".stomp.StompClientService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".MainActivity_drawer"
             android:exported="false" />

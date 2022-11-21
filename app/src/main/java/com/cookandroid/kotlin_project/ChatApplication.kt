@@ -23,11 +23,12 @@ class ChatApplication : AppCompatActivity() {
         binding.recyclerview.adapter = mAdapter
         binding.recyclerview.setHasFixedSize(true)
 
+        /*
         binding.messageActivityImageButton.setOnClickListener{
             val user_data = User(
-                binding.messageActivityEditText.text.toString()
+                binding.messageActivityEditText.text.toString(),
             )
         }
-
+        */
     }
 }
