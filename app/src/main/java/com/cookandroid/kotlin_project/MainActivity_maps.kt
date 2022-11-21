@@ -29,7 +29,7 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback{
     private lateinit var naverMap: NaverMap
 
     private lateinit var stompService : StompClientService
-    private var mBound : Boolean = false;
+    private var mStompServiceBound : Boolean = false;
 
     private val connection = object : ServiceConnection {
 
@@ -39,11 +39,11 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback{
 
             val binder = service as StompClientService.LocalBinder
             stompService = binder.getService()
-            mBound = true
+            mStompServiceBound = true
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
-            mBound = false
+            mStompServiceBound = false
         }
     }
 
@@ -84,6 +84,14 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback{
             }
             R.id.location ->{
                 Log.d("DEBUG", "location")
+
+                naverMap.addOnLocationChangeListener { location ->
+                    Log.d("GPS", "${location.latitude}, ${location.longitude}")
+
+                    if(mStompServiceBound)
+                        stompService.sendGpsPos(location.latitude, location.longitude)
+                }
+
                 return true
             }
             R.id.group ->{
@@ -129,91 +137,3 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback{
     }
 
 }
-
-/*class StompApp(){
-        val logger = Logger.getLogger("Main")
-        val send_url = "/pub/chat/message"
-        lateinit var topic: Disposable
-        lateinit var stompConnection: Disposable
-        var sub_url = "/sub/chat/room/OoMaprWQ7XKEU"
-        val intervalMillis = 1000L
-        val client = OkHttpClient()
-        var msg = "제발 좀 성공 좀 하자 응???"
-
-        val stomp = StompClient(client, intervalMillis)
-        topic = stomp.join(sub_url).subscribe { logger.log(Level.INFO, it) }
-
-        fun subscribe(sub_url: String) {
-            topic = stomp.join(sub_url)
-                .subscribe { logger.log(Level.INFO, it) }
-        }
-
-        fun send(msg: String) {
-            stomp.send(send_url, msg).subscribe {
-                if (it) {
-
-                }
-            }
-        }
-
-        fun unsubscribe() {
-            topic.dispose()
-        }
-        /*fun disconnect(){
-            stompConnection.dispose()
-        }*/
-
-        // connect
-        fun stompconnect() {
-            stomp.connect().subscribe {
-                when (it.type) {
-                    Event.Type.OPENED -> {
-
-                    }
-                    Event.Type.CLOSED -> {
-
-                    }
-                    Event.Type.ERROR -> {
-
-                    }
-                    else -> {}
-                }
-            }
-        }
-
-        fun disconnect() {
-            stompConnection.dispose()
-        }
-
-        stompConnection = stomp.connect().subscribe {
-            when (it.type) {
-                Event.Type.OPENED -> {
-
-                }
-                Event.Type.CLOSED -> {
-
-                }
-                Event.Type.ERROR -> {
-
-                }
-                else -> {}
-            }
-        }
-
-
-        // subscribe
-        /*topic = stomp.join(sub_url)
-            .subscribe { logger.log(Level.INFO, it) }
-        // send
-        stomp.send(send_url, msg).subscribe {
-            if (it) {
-
-            }
-        }*/
-
-        //unsubcribe
-        //topic.dispose()
-
-        // disconnect
-        //stompConnection.dispose()
-}*/

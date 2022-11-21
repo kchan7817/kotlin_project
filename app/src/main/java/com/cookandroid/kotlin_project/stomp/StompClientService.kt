@@ -1,5 +1,6 @@
 package com.cookandroid.kotlin_project.stomp
 
+import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
@@ -11,18 +12,21 @@ import com.cookandroid.kotlin_project.backendinterface.dto.GroupDTO
 import com.cookandroid.kotlin_project.backendinterface.dto.GroupTokenDTO
 import com.cookandroid.kotlin_project.backendinterface.group.get_stompToken
 import com.cookandroid.kotlin_project.backendinterface.group.group_get
+import com.cookandroid.kotlin_project.stomp.dto.StompGpsDTO
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.StompHeader
+import ua.naiksoftware.stomp.dto.StompMessage
 
 
 class StompClientService : Service() {
 
     private var server_url: String = "ws://kangtong1105.codns.com:8080/ws-stomp"
     private var token: String = ""
+    private var group_tokens = mutableListOf<GroupTokenDTO>()
     private lateinit var stompClient: StompClient
 
     private val api_group_get = group_get.create()
@@ -65,9 +69,6 @@ class StompClientService : Service() {
                 token = p0.getStringExtra(loginTokenIntentKey).toString()
             if (p0.hasExtra(serverUrlIntentKey))
                 server_url = p0?.getStringExtra(serverUrlIntentKey).toString()
-
-            if(stompClient.isConnected())
-                stompClient.disconnect()
             connectToStompServer()
         }
 
@@ -82,6 +83,12 @@ class StompClientService : Service() {
 
     private fun connectToStompServer() {
         Log.d("StompService", "try connect to stomp server:$server_url with token:$token")
+
+        if(group_tokens.size > 0)
+            handlerThread.post(Runnable {
+                stompClient.disconnect()
+                group_tokens.clear()
+            })
 
         handlerThread.post(Runnable {
             var headers = listOf(StompHeader("token", token))
@@ -132,18 +139,35 @@ class StompClientService : Service() {
         })
     }
 
+    @SuppressLint("CheckResult")
     private fun subscribeStomp(tokens: GroupTokenDTO) {
         handlerThread.post(Runnable {
             var headers = listOf(StompHeader("token", tokens.token))
-            stompClient.topic("/sub/chat/${tokens.channelKey}", headers).subscribe({ topicMessage ->
-                Log.d("/sub/chat/${tokens.channelKey}", topicMessage.getPayload())
-            })
-            stompClient.topic("/sub/status/${tokens.channelKey}", headers).subscribe({ topicMessage ->
-                Log.d("/sub/status/${tokens.channelKey}", topicMessage.getPayload())
-            })
-            stompClient.topic("/sub/gps/${tokens.channelKey}", headers).subscribe({ topicMessage ->
-                Log.d("/sub/gps/${tokens.channelKey}", topicMessage.getPayload())
-            })
+            stompClient.topic("/sub/chat/${tokens.channelKey}", headers).subscribe { topicMessage ->
+                Log.d("/sub/chat/${tokens.channelKey}", topicMessage.payload)
+
+            }
+            stompClient.topic("/sub/status/${tokens.channelKey}", headers).subscribe { topicMessage ->
+                Log.d("/sub/status/${tokens.channelKey}", topicMessage.payload)
+
+            }
+            stompClient.topic("/sub/gps/${tokens.channelKey}", headers).subscribe { topicMessage ->
+                Log.d("/sub/gps/${tokens.channelKey}", topicMessage.payload)
+
+            }
+            group_tokens.add(tokens)
+        })
+    }
+
+    fun sendGpsPos(latitude: Double, longitude: Double) {
+        handlerThread.post(Runnable {
+            group_tokens.forEach { tokens ->
+                var stompMessage = StompMessage("MESSAGE", listOf(StompHeader("token", tokens.token)),
+                        StompGpsDTO(latitude = latitude, longitude = longitude).toString())
+
+                Log.d("debug", stompMessage.toString())
+                stompClient.send("/pub/gps/upload", stompMessage.toString())
+            }
         })
     }
 }
