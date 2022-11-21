@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import com.cookandroid.kotlin_project.backendinterface.auth.signin
 import com.cookandroid.kotlin_project.backendinterface.dto.UserDTO
 import com.cookandroid.kotlin_project.databinding.ActivityMainBinding
+import com.cookandroid.kotlin_project.stomp.StompClientService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import retrofit2.Call
@@ -31,13 +32,11 @@ class MainActivity : AppCompatActivity() {
 
         val intent: Intent = Intent(this, JoinActivity::class.java)//intent 선언
         val intent2: Intent = Intent(this, MainActivity_maps::class.java)
+        val intent3: Intent = Intent(this, StompClientService::class.java)
         val binding = ActivityMainBinding.inflate(layoutInflater)// java의 findviewbyid 작업을 안해도됨
 
         setContentView(binding.root)
 
-        binding.btnJoin.setOnClickListener{
-            startActivity(intent) // binding 쓰는법
-        }
         binding.btnLogin.setOnClickListener{
             val data_signin = UserDTO(
                 email = binding.email.text.toString(),
@@ -49,6 +48,8 @@ class MainActivity : AppCompatActivity() {
                     val result = response.code();
                     if(result in 200..299) {
                         Log.d("로그인성공", response.body().toString())
+                        intent3.putExtra("token_login", response.body()!!.token)
+                        startService(intent3)
                         startActivity(intent2)
                     }
                     else {
@@ -70,7 +71,6 @@ class MainActivity : AppCompatActivity() {
 
                 }
             })
-
         }
 
     }

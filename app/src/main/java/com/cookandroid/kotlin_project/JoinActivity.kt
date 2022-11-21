@@ -23,21 +23,6 @@ class JoinActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        /*
-        var realname = binding.edtName.text.toString()
-        var birthday  = binding.edtBirthday.text.toString()
-        var username = binding.edtJoinId.text.toString()
-        var password = binding.edtPasswd.text.toString()
-        var email = binding.edtEmail.text.toString()
-        Log.d("api value test", "aaaa" + realname)
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://kangtong1105.codns.com:8000")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val service = retrofit.create(signservice::class.java)
-        val userInfo: Call<LoginResponse> = service.register(LoginResponse(birthday="$birthday", email="$email", username="$username", realname="$realname", password = "$password"))
-        */
-
         binding.btnCheck.setOnClickListener{
             val data = UserDTO(
                 "default_token",
