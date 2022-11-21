@@ -46,7 +46,7 @@ class JoinActivity : AppCompatActivity() {
                 binding.edtNickname.text.toString(),
                 binding.edtName.text.toString(),
                 binding.edtPasswd.text.toString(),
-                )
+            )
             api.register(data).enqueue(object : Callback<UserDTO> {
                 override fun onResponse(call: Call<UserDTO>, response: Response<UserDTO>) {
                     val result = response.code();

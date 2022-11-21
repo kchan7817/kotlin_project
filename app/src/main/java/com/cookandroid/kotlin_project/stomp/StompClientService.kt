@@ -24,7 +24,7 @@ import ua.naiksoftware.stomp.dto.StompMessage
 
 class StompClientService : Service() {
 
-    private var server_url: String = "ws://kangtong1105.codns.com:8080/ws-stomp"
+    private var server_url: String = "wss://seniorsafe.loca.lt/"
     private var token: String = ""
     private var group_tokens = mutableListOf<GroupTokenDTO>()
     private lateinit var stompClient: StompClient

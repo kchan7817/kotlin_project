@@ -1,17 +1,25 @@
 package com.cookandroid.kotlin_project
 
-import android.content.*
+import android.content.DialogInterface
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.cookandroid.kotlin_project.backendinterface.auth.signin
 import com.cookandroid.kotlin_project.backendinterface.dto.UserDTO
 import com.cookandroid.kotlin_project.databinding.ActivityMainBinding
-import com.cookandroid.kotlin_project.stomp.StompClientService
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
+import retrofit2.http.Headers
+import retrofit2.http.POST
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,14 +42,13 @@ class MainActivity : AppCompatActivity() {
             val data_signin = UserDTO(
                 email = binding.email.text.toString(),
                 password = binding.PW.text.toString(),
-                )
+            )
             var dialog = AlertDialog.Builder(this@MainActivity)
             api_singin.register_signin(data_signin).enqueue(object : Callback<UserDTO> {
                 override fun onResponse(call: Call<UserDTO>, response: Response<UserDTO>) {
                     val result = response.code();
                     if(result in 200..299) {
                         Log.d("로그인성공", response.body().toString())
-                        startStompService(response.body()!!.token)
                         startActivity(intent2)
                     }
                     else {
@@ -63,13 +70,8 @@ class MainActivity : AppCompatActivity() {
 
                 }
             })
-        }
-    }
 
-    fun startStompService(token : String) {
-        Log.d("token", token)
-        var stompIntent = Intent(this, StompClientService::class.java)
-        stompIntent.putExtra("token_login", token);
-        startService(stompIntent)
+        }
+
     }
 }

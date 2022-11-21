@@ -1,26 +1,54 @@
 package com.cookandroid.kotlin_project
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentActivity
 import com.cookandroid.kotlin_project.BuildConfig.api_key
 import com.cookandroid.kotlin_project.stomp.StompClientService
+import com.google.android.gms.location.*
+import com.google.android.material.navigation.NavigationView
+import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
+import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
+import io.reactivex.disposables.Disposable
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+import java.net.Socket
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
+import java.util.logging.Logger
+import kotlin.concurrent.thread
+
 
 
 class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback{
-    val sub_url = "/sub/chat/room/OoMaprWQ7XKEU"
-    var msg = "제발 좀 성공 좀 하자 응???"
+
+    lateinit var drawerLayout: DrawerLayout
 
     var TAG:String = "로그"
     val client = OkHttpClient()
@@ -51,6 +79,58 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_maps)
 
+        val intent2: Intent = Intent(this, ChatApplication::class.java)//intent 선언
+
+        val toolbar: Toolbar =findViewById(R.id.toolbar)
+        val navigationView: NavigationView = findViewById(R.id.navigationView)
+        drawerLayout = findViewById(R.id.drawerLayout)
+
+        //액션바에 toolbar 셋팅
+        setSupportActionBar(toolbar)
+
+        //액션바 생성
+        val actionBar: androidx.appcompat.app.ActionBar? = supportActionBar
+
+        //뒤로가기 버튼 생성
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+
+        //뒤로가기 버튼 이미지 변경
+        actionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
+
+
+
+
+        //네비게이션뷰 아이템 선택 이벤트
+        navigationView.setNavigationItemSelectedListener(
+            object : NavigationView.OnNavigationItemSelectedListener{
+                override fun onNavigationItemSelected(item: MenuItem): Boolean {
+                    when(item.itemId){
+                        R.id.senior_home -> {
+                            item.isChecked = true
+                            return true
+                        }
+
+                        R.id.nav_gallery -> {
+                            item.isChecked = true
+                            startActivity(intent2)
+                            drawerLayout.closeDrawers()
+                            return true
+                        }
+
+                        R.id.nav_slideshow -> {
+                            item.isChecked = true
+                            displayMessage("selected slideshow")
+                            drawerLayout.closeDrawers()
+                            return true
+                        }
+                        else -> {
+                            return true
+                        }
+                    } //when
+                } //onNavigationItemSelected
+            } //NavigationView.OnNavigationItemSelectedListener
+        ) //setNavigationItemSelectedListener
+
 
         NaverMapSdk.getInstance(this).client =
             NaverMapSdk.NaverCloudPlatformClient(api_key)
@@ -76,13 +156,30 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback{
         return true
     }
 
+    private fun displayMessage(message:String){
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+    }
+
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.condition ->{
+        when (item.itemId) {
+            R.id.condition -> {
                 Log.d("DEBUG", "condition")
                 return true
             }
-            R.id.location ->{
+            android.R.id.home -> {
+                //drawerLayout 펼치기
+                drawerLayout.openDrawer(GravityCompat.START)
+                return true
+            }
+
+            R.id.mypage -> {
+                var intent=Intent(this,MypageActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+
+            R.id.location -> {
                 Log.d("DEBUG", "location")
 
                 naverMap.addOnLocationChangeListener { location ->
@@ -94,11 +191,21 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback{
 
                 return true
             }
-            R.id.group ->{
+
+            R.id.logout -> {
+                Toast.makeText(this, "로그아웃", Toast.LENGTH_SHORT).show()
+                MySharedPreferences.clearUser(this)
+                var intent=Intent(this,MainActivity::class.java)
+                startActivity(intent)
+                finish()
+
+                return true
+            }
+            R.id.group -> {
                 Log.d("DEBUG", "group")
                 return true
             }
-            else -> return false
+            else ->  return super.onOptionsItemSelected(item)
         }
     }
 
