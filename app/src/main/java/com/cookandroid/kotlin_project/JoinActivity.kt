@@ -35,8 +35,10 @@ class JoinActivity : AppCompatActivity() {
             api.register(data).enqueue(object : Callback<UserDTO> {
                 override fun onResponse(call: Call<UserDTO>, response: Response<UserDTO>) {
                     val result = response.code();
-                    if(result in 200..299)
+                    if(result in 200..299) {
                         Log.d("회원가입성공", response.body().toString())
+                        finish()
+                    }
                     else {
                         Log.w("회원가입실패", response.body().toString())
                         if (binding.edtPasswd != binding.edtPasswdCheck){

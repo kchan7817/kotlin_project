@@ -13,6 +13,7 @@ import com.cookandroid.kotlin_project.backendinterface.dto.GroupTokenDTO
 import com.cookandroid.kotlin_project.backendinterface.group.get_stompToken
 import com.cookandroid.kotlin_project.backendinterface.group.group_get
 import com.cookandroid.kotlin_project.stomp.dto.StompGpsDTO
+import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,10 +25,10 @@ import ua.naiksoftware.stomp.dto.StompMessage
 
 class StompClientService : Service() {
 
-    private var server_url: String = "wss://seniorsafe.loca.lt/"
+    private var server_url: String = "wss://seniorsafe.loca.lt/ws-stomp"
     private var token: String = ""
     private var group_tokens = mutableListOf<GroupTokenDTO>()
-    private lateinit var stompClient: StompClient
+    private var stompClient: StompClient ?= null
 
     private val api_group_get = group_get.create()
     private val api_group_stompToken = get_stompToken.create()
@@ -77,23 +78,23 @@ class StompClientService : Service() {
 
     override fun onDestroy() {
         Log.d("StompService", "Stopping stomp client service")
-        handlerThread.post(Runnable { stompClient.disconnectCompletable() })
+        handlerThread.post(Runnable { stompClient!!.disconnectCompletable() })
         return super.onDestroy()
     }
 
     private fun connectToStompServer() {
         Log.d("StompService", "try connect to stomp server:$server_url with token:$token")
 
-        if(group_tokens.size > 0)
+        if(stompClient != null)
             handlerThread.post(Runnable {
-                stompClient.disconnect()
+                stompClient!!.disconnect()
                 group_tokens.clear()
             })
 
         handlerThread.post(Runnable {
             var headers = listOf(StompHeader("token", token))
             stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, server_url);
-            stompClient.connect(headers)
+            stompClient!!.connect(headers)
         })
 
         getGroupInfoAndTokenAndSubscribeStomp()
@@ -134,7 +135,7 @@ class StompClientService : Service() {
             }
 
             override fun onFailure(call: Call<GroupTokenDTO>, t: Throwable) {
-                Log.e("api_group_token","${t.localizedMessage}")
+                Log.e("api_group_token", t.localizedMessage)
             }
         })
     }
@@ -143,15 +144,15 @@ class StompClientService : Service() {
     private fun subscribeStomp(tokens: GroupTokenDTO) {
         handlerThread.post(Runnable {
             var headers = listOf(StompHeader("token", tokens.token))
-            stompClient.topic("/sub/chat/${tokens.channelKey}", headers).subscribe { topicMessage ->
+            stompClient!!.topic("/sub/chat/${tokens.channelKey}", headers).subscribe { topicMessage ->
                 Log.d("/sub/chat/${tokens.channelKey}", topicMessage.payload)
 
             }
-            stompClient.topic("/sub/status/${tokens.channelKey}", headers).subscribe { topicMessage ->
+            stompClient!!.topic("/sub/status/${tokens.channelKey}", headers).subscribe { topicMessage ->
                 Log.d("/sub/status/${tokens.channelKey}", topicMessage.payload)
 
             }
-            stompClient.topic("/sub/gps/${tokens.channelKey}", headers).subscribe { topicMessage ->
+            stompClient!!.topic("/sub/gps/${tokens.channelKey}", headers).subscribe { topicMessage ->
                 Log.d("/sub/gps/${tokens.channelKey}", topicMessage.payload)
 
             }
@@ -162,11 +163,19 @@ class StompClientService : Service() {
     fun sendGpsPos(latitude: Double, longitude: Double) {
         handlerThread.post(Runnable {
             group_tokens.forEach { tokens ->
-                var stompMessage = StompMessage("MESSAGE", listOf(StompHeader("token", tokens.token)),
-                        StompGpsDTO(latitude = latitude, longitude = longitude).toString())
+
+                var header = listOf(
+                    StompHeader("token", tokens.token),
+                    StompHeader("destination", "/pub/gps/upload"))
+
+                var payload = JsonObject()
+                payload.addProperty("latitude", latitude.toString())
+                payload.addProperty("longitude", longitude.toString())
+
+                var stompMessage = StompMessage("MESSAGE", header, payload.toString())
 
                 Log.d("debug", stompMessage.toString())
-                stompClient.send("/pub/gps/upload", stompMessage.toString())
+                stompClient!!.send(stompMessage).subscribe()
             }
         })
     }

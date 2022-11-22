@@ -37,6 +37,9 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+        binding.btnJoin.setOnClickListener {
+            startActivity(intent)
+        }
         binding.btnLogin.setOnClickListener{
             val data_signin = UserDTO(
                 email = binding.email.text.toString(),
