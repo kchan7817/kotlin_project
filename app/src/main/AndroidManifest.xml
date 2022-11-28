@@ -11,25 +11,31 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
+        android:process=":location"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_senior"
         android:label="SeniorSafe"
         android:roundIcon="@mipmap/ic_launcher_senior_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Kotlin_project"
-        android:usesCleartextTraffic="true" >
+        android:usesCleartextTraffic="true">
 
         <service
+            android:process=":location"
             android:name=".stomp.StompClientService"
-            android:enabled="true"
-            android:exported="true"></service>
+            android:enabled="false"
+            android:exported="true"
+            android:isolatedProcess="true"
+            android:externalService="true"></service>
 
         <activity
+            android:process=":location"
             android:name=".MypageActivity"
             android:exported="false"
             android:label="@string/title_activity_mypage"
             android:parentActivityName=".MainActivity_maps" />
         <activity
+            android:process=":location"
             android:name=".IntroActivity"
             android:exported="true"
             android:theme="@style/Theme.Kotlin_project.NoActionBar" >
@@ -40,17 +46,21 @@
             </intent-filter>
         </activity>
         <activity
+            android:process=":location"
             android:name=".MainActivity_maps"
-            android:exported="false"
+            android:exported="true"
             android:theme="@style/Theme.Kotlin_project.NoActionBar"
             tools:ignore="Instantiatable" />
         <activity
+            android:process=":location"
             android:name=".ChatApplication" />
         <activity
+            android:process=":location"
             android:name=".JoinActivity"
             android:exported="false"
             tools:ignore="Instantiatable" />
         <activity
+            android:process=":location"
             android:name=".MainActivity"
             android:exported="true" >
         </activity>

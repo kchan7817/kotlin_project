@@ -37,6 +37,9 @@ class JoinActivity : AppCompatActivity() {
                     val result = response.code();
                     if(result in 200..299) {
                         Log.d("회원가입성공", response.body().toString())
+                        MySharedPreferences.setRealName(this@JoinActivity, binding.edtName.text.toString())
+                        MySharedPreferences.setBirthday(this@JoinActivity, binding.edtBirthday.text.toString())
+                        MySharedPreferences.setUserName(this@JoinActivity, binding.edtNickname.text.toString())
                         finish()
                     }
                     else {

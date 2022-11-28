@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +27,8 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentActivity
 import com.cookandroid.kotlin_project.BuildConfig.api_key
+import com.cookandroid.kotlin_project.databinding.ActivityMainMapsBinding
+import com.cookandroid.kotlin_project.databinding.ActivityMypageBinding
 import com.cookandroid.kotlin_project.stomp.StompClientService
 import com.google.android.gms.location.*
 import com.google.android.material.navigation.NavigationView
@@ -38,6 +41,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import org.w3c.dom.Text
 import java.net.Socket
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
@@ -75,6 +79,7 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback{
         }
     }
 
+    @SuppressLint("WrongConstant")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_maps)
@@ -96,9 +101,6 @@ class MainActivity_maps : AppCompatActivity(), OnMapReadyCallback{
 
         //뒤로가기 버튼 이미지 변경
         actionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
-
-
-
 
         //네비게이션뷰 아이템 선택 이벤트
         navigationView.setNavigationItemSelectedListener(

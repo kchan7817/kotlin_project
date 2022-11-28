@@ -30,26 +30,58 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // SharedPreferences 안에 값이 저장되어 있지 않을 때 -> Login
+        if(MySharedPreferences.getUserId(this).isNullOrBlank()
+            || MySharedPreferences.getUserPass(this).isNullOrBlank()) {
+            api_singin
+        }
+        else { // SharedPreferences 안에 값이 저장되어 있을 때 -> MainActivity_maps로 이동
+            Toast.makeText(this, "${MySharedPreferences.getUserId(this)}님 자동 로그인 되었습니다.", Toast.LENGTH_SHORT).show()
+            val intent2 = Intent(this, MainActivity_maps::class.java)
+            startActivity(intent2)
+            finish()
+        }
+
+
         val intent: Intent = Intent(this, JoinActivity::class.java)//intent 선언
         val intent2: Intent = Intent(this, MainActivity_maps::class.java)
         val intent3: Intent = Intent(this, StompClientService::class.java)
         val binding = ActivityMainBinding.inflate(layoutInflater)// java의 findviewbyid 작업을 안해도됨
+
 
         setContentView(binding.root)
 
         binding.btnJoin.setOnClickListener {
             startActivity(intent)
         }
+        // 자동로그인버튼
+        binding.rgLoginKeep.setOnCheckedChangeListener { CompoundButton, onSwitch ->
+            //스위치가 켜지면
+            if(onSwitch) {
+                MySharedPreferences.setUserId(this, binding.email.text.toString())
+                MySharedPreferences.setUserPass(this, binding.PW.text.toString())
+                Toast.makeText(this, "자동로그인 ON", Toast.LENGTH_SHORT).show()
+            }
+            //스위치가 꺼지면
+            else{
+                MySharedPreferences.clearUser(this)
+                Toast.makeText(this, "자동로그인 OFF", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         binding.btnLogin.setOnClickListener{
             val data_signin = UserDTO(
                 email = binding.email.text.toString(),
                 password = binding.PW.text.toString(),
             )
+
             var dialog = AlertDialog.Builder(this@MainActivity)
             api_singin.register_signin(data_signin).enqueue(object : Callback<UserDTO> {
                 override fun onResponse(call: Call<UserDTO>, response: Response<UserDTO>) {
                     val result = response.code();
                     if(result in 200..299) {
+                        MySharedPreferences.setUserId(this@MainActivity, binding.email.text.toString())
+                        MySharedPreferences.setUserPass(this@MainActivity, binding.PW.text.toString())
                         Log.d("로그인성공", response.body().toString())
                         intent3.putExtra("token_login", response.body()!!.token)
                         startService(intent3)

@@ -28,6 +28,25 @@
         <entry key="..\:/CookAndroid/Project/kotlin_project/app/src/main/res/menu/drawer_menu.xml" value="0.2526041666666667" />
         <entry key="..\:/CookAndroid/Project/kotlin_project/app/src/main/res/menu/menu_option.xml" value="0.25364583333333335" />
         <entry key="..\:/CookAndroid/Project/kotlin_project/app/src/main/res/mipmap-anydpi-v26/ic_launcher_senior.xml" value="0.1" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/drawable/selector_switch.xml" value="0.1215" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/drawable/shape_switch_thumb.xml" value="0.1215" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/drawable/shape_switch_track_off.xml" value="0.135" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/drawable/shape_switch_track_on.xml" value="0.135" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/layout/activity_chat_application.xml" value="0.23385416666666667" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/layout/activity_main.xml" value="0.2015625" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/layout/activity_main_drawer.xml" value="0.24947916666666667" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/layout/activity_main_maps.xml" value="0.24947916666666667" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/layout/activity_mypage.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/layout/activity_recognizer.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/layout/activity_senior.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/layout/fragment_home.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/layout/fragment_slideshow.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/layout/header_layout.xml" value="0.23385416666666667" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/layout/receive_msg.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/layout/send_msg.xml" value="0.23385416666666667" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/layout/toolbar_layout.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/menu/activity_main_drawer.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/bluec/AndroidStudioProjects3/kotlin_project/kotlin_project/app/src/main/res/menu/menu_option.xml" value="0.22083333333333333" />
       </map>
     </option>
   </component>

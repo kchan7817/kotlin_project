@@ -100,34 +100,35 @@
             android:layout_marginBottom="3dp"
             android:background="@android:color/darker_gray" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <TextView
             android:id="@+id/my_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="15dp"
-            android:text="이름"
+            tools:text="이름"
             android:textColor="@android:color/black"
             android:textSize="15sp"
             android:textStyle="bold"
             android:gravity="center_vertical" />
 
-        <androidx.appcompat.widget.AppCompatButton
+
+        <TextView
             android:id="@+id/my_birth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="15dp"
-            android:text="생년월일"
+            tools:text="생년월일"
             android:textColor="@android:color/black"
             android:textSize="15sp"
             android:textStyle="bold"
             android:gravity="center_vertical"/>
 
-        <androidx.appcompat.widget.AppCompatButton
+        <TextView
             android:id="@+id/my_nickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="15dp"
-            android:text="닉네임"
+            tools:text="닉네임"
             android:textColor="@android:color/black"
             android:textSize="15sp"
             android:textStyle="bold"
